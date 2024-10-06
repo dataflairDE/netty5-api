@@ -41,7 +41,7 @@ public class DemoClient {
 
     public static void send(Netty5Client client) {
         new Thread(() -> {
-            DemoRespondPacket packet = client.netty5ClientPacketTransmitter().queryPacketDirect(new DemoRequestPacket("asd"), DemoRespondPacket.class);
+            DemoRespondPacket packet = client.thisChannel().transmitter().queryPacketDirect(new DemoRequestPacket("asd"), DemoRespondPacket.class);
             System.out.println(packet.d());
         });
     }
