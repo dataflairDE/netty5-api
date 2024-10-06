@@ -1,0 +1,7 @@
+[versions]
+# utlities
+utility-lombok = "1.18.34"
+
+[libraries]
+# utilities
+utility-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "utility-lombok" }
