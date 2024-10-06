@@ -19,14 +19,14 @@ public abstract class Packet {
         this.buffer = CodecBuffer.allocate();
     }
 
-    public Packet(@NotNull UUID queryId) {
-        this.queryId = queryId;
-        this.buffer = CodecBuffer.allocate();
-    }
-
     public Packet(@NotNull CodecBuffer buffer) {
         this.queryId = null;
         this.buffer = buffer;
+    }
+
+    public Packet(@NotNull UUID queryId) {
+        this.queryId = queryId;
+        this.buffer = CodecBuffer.allocate();
     }
 
     public Packet(@NotNull UUID queryId, @NotNull CodecBuffer buffer) {

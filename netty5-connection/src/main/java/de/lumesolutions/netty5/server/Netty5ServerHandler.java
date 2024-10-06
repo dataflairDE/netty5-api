@@ -16,16 +16,25 @@ package de.lumesolutions.netty5.server;
  * limitations under the License.
  */
 
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.common.packet.Packet;
+import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @AllArgsConstructor
 public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packet> {
 
+    private final List<Netty5ClientChannel> authenticated = new ArrayList<>();
+    private final Map<SocketAddress, Channel> unauthenticated = new ConcurrentHashMap<>();
     private final Netty5Server server;
 
     @Override
@@ -35,7 +44,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
+        this.unauthenticated.put(ctx.channel().remoteAddress(), ctx.channel());
     }
 
     @Override

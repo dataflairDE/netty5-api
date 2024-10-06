@@ -23,27 +23,27 @@ public record CodecBuffer(@NotNull Buffer origin) {
      * The BUFFER_ALLOCATOR is a private static final variable that holds the instance
      * of the BufferAllocator interface. It is initialized with the DefaultBufferAllocators.offHeapAllocator()
      * implementation.
-     *
+     * <p>
      * The BufferAllocator interface is responsible for providing memory management functionalities
      * for buffer allocation. It abstracts the underlying memory allocation mechanism and provides
      * a unified API to allocate buffers, such as byte arrays, off-heap memory blocks, etc.
-     *
+     * <p>
      * This constant variable ensures that a single instance of BufferAllocator is used throughout
      * the class. It is recommended to use a constant instance of the allocator to prevent
      * unnecessary memory allocation overhead.
-     *
+     * <p>
      * The BUFFER_ALLOCATOR variable is declared private to restrict its visibility within the class.
      * Being declared as static, it belongs to the class itself rather than an instance of the class.
      * Finally, the final modifier ensures that the value of the variable cannot be modified once
      * it is assigned.
-     *
+     * <p>
      * Example usage:
      *   // Allocate a buffer of size 1024 bytes
      *   ByteBuffer buffer = BUFFER_ALLOCATOR.allocate(1024);
-     *
+     * <p>
      *   // Deallocate the buffer when it is no longer needed
      *   BUFFER_ALLOCATOR.deallocate(buffer);
-     *
+     * <p>
      *   // Retrieve the maximum buffer size that can be allocated
      *   int maxBufferSize = BUFFER_ALLOCATOR.getMaxBufferSize();
      */

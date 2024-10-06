@@ -18,19 +18,30 @@ package de.lumesolutions.netty5.server;
 
 import de.lumesolutions.netty5.Netty5ChannelInitializer;
 import de.lumesolutions.netty5.Netty5ChannelUtils;
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.Netty5Component;
 import io.netty5.bootstrap.ServerBootstrap;
 import io.netty5.channel.*;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 @Getter
 public final class Netty5Server extends Netty5Component {
 
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
+    private final List<Predicate<Netty5ClientChannel>> authPredicates = new ArrayList<>();
 
     public Netty5Server(@NotNull String hostname, int port) {
         super(1, hostname, port);
+    }
+
+    public Netty5Server addAuthenticationPredicate(@NotNull Predicate<Netty5ClientChannel> predicate) {
+        this.authPredicates.add(predicate);
+        return this;
     }
 
     @Override
