@@ -1,7 +1,15 @@
 [versions]
 # utlities
 utility-lombok = "1.18.34"
+jetbrains-annotations = "25.0.0"
+
+#netty5
+netty5-alpha = "5.0.0.Alpha5"
 
 [libraries]
 # utilities
 utility-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "utility-lombok" }
+jetbrains-annotations = { group = "org.jetbrains", name="annotations", version.ref = "jetbrains-annotations" }
+
+#netty5
+netty5-all = { group = "io.netty", name = "netty5-all", version.ref = "netty5-alpha" }
