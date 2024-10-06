@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.server.Netty5Server;
+import de.lumesolutions.netty5.common.codec.CodecBuffer;
+import de.lumesolutions.netty5.common.packet.Packet;
+import org.jetbrains.annotations.NotNull;
 
-public class DemoServer {
-    public static void main(String[] args) {
+public class DemoPacket extends Packet {
 
-        var server = new Netty5Server("127.0.0.1", 8080);
+    private final String message;
 
-        try {
-            server.initialize();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public DemoPacket(String message) {
+        this.message = message;
+        buffer.writeString(message);
+    }
 
-        server.connectionFuture().thenAccept(unused -> {
-            System.out.println("connected");
-        });
-
-        server.authenticationActions().add(packetTransmitter -> packetTransmitter.listenQuery(DemoRequestPacket.class, "asdasdasd", packet -> new DemoRespondPacket(packet.s())));
+    public DemoPacket(@NotNull CodecBuffer buffer) {
+        super(buffer);
+        this.message = buffer.readString();
     }
 }

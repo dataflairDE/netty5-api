@@ -24,7 +24,6 @@ package de.lumesolutions.netty5.common.codec;
  * SOFTWARE.
  */
 
-import de.lumesolutions.netty5.Netty5ChannelUtils;
 import de.lumesolutions.netty5.common.packet.Packet;
 import io.netty5.buffer.Buffer;
 import io.netty5.channel.ChannelHandlerContext;
@@ -39,15 +38,11 @@ public final class PacketDecoder extends ByteToMessageDecoder {
         var className = buffer.readString();
 
         try {
-            var queryId = buffer.readUniqueId();
             var readableBytes = buffer.readInt();
             var content = new CodecBuffer(in.copy(in.readerOffset(), readableBytes, true));
             in.skipReadableBytes(readableBytes);
 
-            Class<? extends Packet> packetClass = (Class<? extends Packet>) Class.forName(className);
-            var packet = packetClass.getConstructor(CodecBuffer.class).newInstance(content);
-            packet.queryId(queryId.equals(Netty5ChannelUtils.SYSTEM_UUID) ? null : queryId);
-
+            var packet = (Packet) Class.forName(className).getConstructor(CodecBuffer.class).newInstance(content);
             buffer.resetBuffer();
             ctx.fireChannelRead(packet);
         } catch (Exception e) {

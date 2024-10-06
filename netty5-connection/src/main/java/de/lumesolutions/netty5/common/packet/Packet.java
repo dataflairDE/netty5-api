@@ -11,26 +11,13 @@ import java.util.UUID;
 @Setter
 public abstract class Packet {
 
-    protected UUID queryId;
     protected CodecBuffer buffer;
 
     public Packet() {
-        this.queryId = null;
         this.buffer = CodecBuffer.allocate();
     }
 
     public Packet(@NotNull CodecBuffer buffer) {
-        this.queryId = null;
-        this.buffer = buffer;
-    }
-
-    public Packet(@NotNull UUID queryId) {
-        this.queryId = queryId;
-        this.buffer = CodecBuffer.allocate();
-    }
-
-    public Packet(@NotNull UUID queryId, @NotNull CodecBuffer buffer) {
-        this.queryId = queryId;
         this.buffer = buffer;
     }
 }

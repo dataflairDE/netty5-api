@@ -34,7 +34,7 @@ public abstract class Netty5Component {
 
     @Setter(AccessLevel.PROTECTED)
     private CommunicationFuture<Void> connectionFuture = new CommunicationFuture<>();
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private final EventLoopGroup bossGroup;
     @Getter(AccessLevel.PROTECTED)
     private final String hostname;

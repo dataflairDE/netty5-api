@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.client.Netty5Client;
+
+import java.util.UUID;
 
 public class DemoClient {
     public static void main(String[] args) {
-
-        var client = new Netty5Client("127.0.0.1", 8080);
+        var client = new Netty5Client("127.0.0.1", 8080,
+                new Netty5ClientChannel.Identity("Client-1", UUID.randomUUID()),
+                null);
 
         try {
             client.initialize();
@@ -27,5 +31,18 @@ public class DemoClient {
             throw new RuntimeException(e);
         }
 
+        client.connectionFuture().thenAccept(_ -> {
+            System.out.println("connected");
+
+            // Call the send method
+            send(client);
+        });
+    }
+
+    public static void send(Netty5Client client) {
+        new Thread(() -> {
+            DemoRespondPacket packet = client.netty5ClientPacketTransmitter().queryPacketDirect(new DemoRequestPacket("asd"), DemoRespondPacket.class);
+            System.out.println(packet.d());
+        });
     }
 }

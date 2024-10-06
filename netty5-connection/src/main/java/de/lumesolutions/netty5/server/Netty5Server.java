@@ -20,13 +20,16 @@ import de.lumesolutions.netty5.Netty5ChannelInitializer;
 import de.lumesolutions.netty5.Netty5ChannelUtils;
 import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.Netty5Component;
+import de.lumesolutions.netty5.client.Netty5ClientPacketTransmitter;
 import io.netty5.bootstrap.ServerBootstrap;
 import io.netty5.channel.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Getter
@@ -34,6 +37,10 @@ public final class Netty5Server extends Netty5Component {
 
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
     private final List<Predicate<Netty5ClientChannel>> authPredicates = new ArrayList<>();
+    private final List<Consumer<Netty5ClientPacketTransmitter>> authenticationActions = new ArrayList<>();
+    @Setter
+    private List<Netty5ClientChannel> connections = new ArrayList<>();
+    private Netty5ServerPacketTransmitter packetTransmitter;
 
     public Netty5Server(@NotNull String hostname, int port) {
         super(1, hostname, port);

@@ -18,8 +18,10 @@ package de.lumesolutions.netty5.client;
  * limitations under the License.
  */
 
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.Netty5Component;
 import de.lumesolutions.netty5.common.packet.Packet;
+import de.lumesolutions.netty5.common.packet.auth.AuthPacket;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;
@@ -33,12 +35,17 @@ public final class Netty5ClientHandler extends SimpleChannelInboundHandler<Packe
 
     @Override
     protected void messageReceived(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
-
+        netty5Client.thisChannel().transmitter().call(packet, null);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.channel().writeAndFlush(new AuthPacket(netty5Client.identity(), netty5Client.authProperty()));
         netty5Client.connectionState(Netty5Component.ConnectionState.CONNECTED);
+        netty5Client.thisChannel(new Netty5ClientChannel(netty5Client.identity(), ctx.channel(), new Netty5ClientPacketTransmitter(
+                netty5Client.bossGroup(),
+                packet -> netty5Client.thisChannel().sendPacket(packet)
+        )));
     }
 
     @Override
@@ -52,7 +59,8 @@ public final class Netty5ClientHandler extends SimpleChannelInboundHandler<Packe
     @Override
     public void channelExceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (!(cause instanceof IOException)) {
-            System.err.println(cause.getMessage());
+            if (cause.getMessage().equalsIgnoreCase("null")) return;
+            cause.printStackTrace();
         }
     }
 }

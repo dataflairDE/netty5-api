@@ -21,8 +21,6 @@ public final class PacketEncoder extends MessageToByteEncoder<Packet> {
                 msg.getClass().getName().getBytes(StandardCharsets.UTF_8).length +
                 // amount of bytes in buffer
                 Integer.BYTES +
-                // UUID bytes
-                (msg.queryId() == null ? Netty5ChannelUtils.SYSTEM_UUID : msg.queryId()).toString().getBytes(StandardCharsets.UTF_8).length +
                 // buffer content
                 msg.buffer().origin().readableBytes();
     }
@@ -35,7 +33,6 @@ public final class PacketEncoder extends MessageToByteEncoder<Packet> {
             var readableBytes = origin.readableBytes();
 
             buffer.writeString(msg.getClass().getName());
-            buffer.writeUniqueId(msg.queryId() == null ? Netty5ChannelUtils.SYSTEM_UUID : msg.queryId());
             buffer.writeInt(readableBytes);
 
             origin.copyInto(0, out, out.writerOffset(), readableBytes);

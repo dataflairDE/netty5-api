@@ -21,11 +21,13 @@ package de.lumesolutions.netty5.common.packet.auth;
 import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.common.codec.CodecBuffer;
 import de.lumesolutions.netty5.common.packet.Packet;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class AuthPacket extends Packet {
 
     protected final Netty5ClientChannel.Identity identity;

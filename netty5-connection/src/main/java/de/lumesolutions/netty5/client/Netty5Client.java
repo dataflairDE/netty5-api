@@ -20,17 +20,35 @@ package de.lumesolutions.netty5.client;
 
 import de.lumesolutions.netty5.Netty5ChannelInitializer;
 import de.lumesolutions.netty5.Netty5ChannelUtils;
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.Netty5Component;
 import io.netty5.bootstrap.Bootstrap;
 import io.netty5.channel.ChannelOption;
 import io.netty5.channel.SimpleChannelInboundHandler;
 import io.netty5.channel.epoll.Epoll;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
 public final class Netty5Client extends Netty5Component {
 
-    public Netty5Client(@NotNull String hostname, int port) {
+    private final Netty5ClientChannel.Identity identity;
+    private final Map<String, String> authProperty;
+    @Setter
+    private Netty5ClientChannel thisChannel;
+
+    public Netty5Client(@NotNull String hostname,
+                        int port,
+                        @NotNull Netty5ClientChannel.Identity identity,
+                        @Nullable Map<String, String> authProperty) {
         super(0, hostname, port);
+        this.identity = identity;
+        this.authProperty = authProperty == null ? new HashMap<>() : authProperty;
     }
 
     @Override

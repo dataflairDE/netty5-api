@@ -1,3 +1,7 @@
+package de.lumesolutions.netty5.common.packet;
+
+
+
 /*
  * Copyright 2023-2024 netty5-api contributors
  *
@@ -14,23 +18,26 @@
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.server.Netty5Server;
+import de.lumesolutions.netty5.common.codec.CodecBuffer;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
-public class DemoServer {
-    public static void main(String[] args) {
+import java.util.UUID;
 
-        var server = new Netty5Server("127.0.0.1", 8080);
+@Setter
+@Getter
+public abstract class RespondPacket extends Packet implements CodecBuffer.WriteReadStream {
 
-        try {
-            server.initialize();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    protected UUID queryId;
 
-        server.connectionFuture().thenAccept(unused -> {
-            System.out.println("connected");
-        });
+    public RespondPacket() {
+        super();
+    }
 
-        server.authenticationActions().add(packetTransmitter -> packetTransmitter.listenQuery(DemoRequestPacket.class, "asdasdasd", packet -> new DemoRespondPacket(packet.s())));
+    public RespondPacket(@NotNull CodecBuffer buffer) {
+        super(buffer);
+        this.queryId = buffer.readUniqueId();
+        this.readBuffer(buffer);
     }
 }
