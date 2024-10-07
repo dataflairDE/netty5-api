@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -40,7 +41,7 @@ public abstract class Netty5PacketTransmitter {
 
     private final EventLoopGroup eventExecutors;
     private final Consumer<Packet> packetConsumer;
-    private final Map<Class<? extends Packet>, Map<String, Consumer<Packet>>> listener = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Packet>, Map<String, BiConsumer<Netty5ClientChannel, Packet>>> listener = new ConcurrentHashMap<>();
     private final Map<UUID, Consumer<Packet>> futureRequests = new ConcurrentHashMap<>();
     private final Map<UUID, Packet> directRequests = new HashMap<>();
     private final Map<Class<? extends QueryPacket>, Map<String, Function<QueryPacket, RespondPacket>>> responders = new ConcurrentHashMap<>();
@@ -54,14 +55,14 @@ public abstract class Netty5PacketTransmitter {
     @SuppressWarnings("unchecked")
     public <P extends Packet> void listen(@NotNull Class<P> packetClass,
                                           @NotNull String key,
-                                          @NotNull Consumer<P> callback) {
+                                          @NotNull BiConsumer<Netty5ClientChannel, P> callback) {
         var listeners = this.listener.getOrDefault(packetClass, new ConcurrentHashMap<>());
-        listeners.put(key, (Consumer<Packet>) callback);
+        listeners.put(key, (BiConsumer<Netty5ClientChannel, Packet>) callback);
         this.listener.put(packetClass, listeners);
     }
 
     public <P extends Packet> void listen(@NotNull Class<P> packetClass,
-                                          @NotNull Consumer<P> callback) {
+                                          @NotNull BiConsumer<Netty5ClientChannel, P> callback) {
         this.listen(packetClass, generateRandomKey(), callback);
     }
 
@@ -160,7 +161,7 @@ public abstract class Netty5PacketTransmitter {
         this.callActions(packet, sender);
 
         if (listener().containsKey(packet.getClass())) {
-            listener().get(packet.getClass()).forEach((_, packetConsumer) -> packetConsumer.accept(packet));
+            listener().get(packet.getClass()).forEach((_, packetConsumer) -> packetConsumer.accept(sender, packet));
         }
     }
 
