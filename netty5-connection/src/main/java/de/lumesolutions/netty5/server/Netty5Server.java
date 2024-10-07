@@ -40,7 +40,7 @@ public final class Netty5Server extends Netty5Component {
 
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
     private final List<Predicate<Netty5ClientChannel>> authPredicates = new ArrayList<>();
-    private final List<Consumer<Netty5ClientPacketTransmitter>> authenticationActions = new ArrayList<>();
+    private final List<Consumer<Netty5ClientChannel>> authenticationActions = new ArrayList<>();
     private final List<Consumer<Netty5ClientChannel>> inactiveActions = new ArrayList<>();
     private final Netty5ServerPacketTransmitter packetTransmitter;
     @Setter
@@ -48,14 +48,10 @@ public final class Netty5Server extends Netty5Component {
 
     public Netty5Server(@NotNull String hostname, int port) {
         super(1, hostname, port);
-        this.packetTransmitter = new Netty5ServerPacketTransmitter(workerGroup, packet -> {
-            for (var connection : this.connections) {
-                connection.sendPacket(packet);
-            }
-        }, (queryPacket, aClass, consumer) -> {
-            for (var connection : this.connections) {
-                connection.transmitter().queryPacket(queryPacket, aClass, consumer);
-            }
+        this.packetTransmitter = new Netty5ServerPacketTransmitter(bossGroup(), packet -> {
+
+        }, (queryPacket, packetClass, consumer) -> {
+
         });
     }
 
