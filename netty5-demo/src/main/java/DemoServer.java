@@ -31,6 +31,6 @@ public class DemoServer {
             System.out.println("connected");
         });
 
-        server.authenticationActions().add(packetTransmitter -> packetTransmitter.listenQuery(DemoRequestPacket.class, "asdasdasd", packet -> new DemoRespondPacket(packet.s())));
+        server.authenticationActions().add(packetTransmitter -> packetTransmitter.transmitter().listenQuery(DemoRequestPacket.class, "asdasdasd", packet -> new DemoRespondPacket(packet.s())));
     }
 }
