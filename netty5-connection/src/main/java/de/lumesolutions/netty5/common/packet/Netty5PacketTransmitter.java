@@ -173,7 +173,6 @@ public abstract class Netty5PacketTransmitter {
                 .toString();
     }
 
-
     public <Q extends QueryPacket> void callResponder(@NotNull Q query) {
         if (responders.containsKey(query.getClass())) {
             responders.get(query.getClass()).forEach((_, queryPacketRespondPacketFunction) -> {
@@ -186,7 +185,7 @@ public abstract class Netty5PacketTransmitter {
         }
     }
 
-    public class NullSimulationPacket extends RespondPacket {
+    public static class NullSimulationPacket extends RespondPacket {
 
         public NullSimulationPacket() {
         }

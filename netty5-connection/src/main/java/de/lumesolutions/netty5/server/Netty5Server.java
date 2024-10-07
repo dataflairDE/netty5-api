@@ -41,12 +41,22 @@ public final class Netty5Server extends Netty5Component {
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
     private final List<Predicate<Netty5ClientChannel>> authPredicates = new ArrayList<>();
     private final List<Consumer<Netty5ClientPacketTransmitter>> authenticationActions = new ArrayList<>();
+    private final List<Consumer<Netty5ClientChannel>> inactiveActions = new ArrayList<>();
+    private final Netty5ServerPacketTransmitter packetTransmitter;
     @Setter
     private List<Netty5ClientChannel> connections = new ArrayList<>();
-    private Netty5ServerPacketTransmitter packetTransmitter;
 
     public Netty5Server(@NotNull String hostname, int port) {
         super(1, hostname, port);
+        this.packetTransmitter = new Netty5ServerPacketTransmitter(workerGroup, packet -> {
+            for (var connection : this.connections) {
+                connection.sendPacket(packet);
+            }
+        }, (queryPacket, aClass, consumer) -> {
+            for (var connection : this.connections) {
+                connection.transmitter().queryPacket(queryPacket, aClass, consumer);
+            }
+        });
     }
 
     public Netty5Server addAuthenticationPredicate(@NotNull Predicate<Netty5ClientChannel> predicate) {

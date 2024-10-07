@@ -19,18 +19,46 @@ package de.lumesolutions.netty5.server;
  */
 
 import de.lumesolutions.netty5.Netty5ClientChannel;
+import de.lumesolutions.netty5.TriConsumer;
 import de.lumesolutions.netty5.common.packet.Netty5PacketTransmitter;
 import de.lumesolutions.netty5.common.packet.Packet;
+import de.lumesolutions.netty5.common.packet.QueryPacket;
 import io.netty5.channel.EventLoopGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class Netty5ServerPacketTransmitter extends Netty5PacketTransmitter {
 
-    public Netty5ServerPacketTransmitter(EventLoopGroup eventExecutors, Consumer<Packet> packetConsumer) {
+    private final TriConsumer<QueryPacket, Class<Packet>, Consumer<Packet>> queryPacketConsumer;
+
+    public Netty5ServerPacketTransmitter(EventLoopGroup eventExecutors,
+                                         Consumer<Packet> packetConsumer,
+                                         TriConsumer<QueryPacket, Class<Packet>, Consumer<Packet>> queryPacketConsumer) {
         super(eventExecutors, packetConsumer);
+        this.queryPacketConsumer = queryPacketConsumer;
+    }
+
+    @Override
+    public <P extends Packet> CompletableFuture<Packet> queryPacket(@NotNull QueryPacket queryPacket, Class<P> packet) {
+        return null;
+    }
+
+    @Override
+    public <P extends Packet> P queryPacketDirect(@NotNull QueryPacket queryPacket, Class<P> packetClass) {
+        return null;
+    }
+
+    @Override
+    public <P extends Packet> void queryPacket(@NotNull QueryPacket queryPacket, Class<P> packet, Consumer<P> callback) {
+        // todo send to every connected client
+    }
+
+    @Override
+    public void publishPacket(@NotNull Packet packet) {
+        // todo send to every connected client
     }
 
     @Override

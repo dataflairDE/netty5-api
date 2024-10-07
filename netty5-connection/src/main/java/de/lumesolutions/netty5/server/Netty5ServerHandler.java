@@ -30,6 +30,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @AllArgsConstructor
 public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packet> {
@@ -62,7 +63,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
             return;
         }
 
-        var sender =server.connections()
+        var sender = server.connections()
                 .stream()
                 .filter(netty5ClientChannel -> netty5ClientChannel.channel().equals(channelHandlerContext.channel()))
                 .findFirst()
@@ -83,13 +84,16 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         this.unauthenticated.remove(ctx.channel().remoteAddress());
+        var copy = new ArrayList<>(server.connections());
         for (var netty5ClientChannel : server.connections()) {
             if (netty5ClientChannel.channel().equals(ctx.channel())) {
-                var copy = new ArrayList<>(server.connections());
-                copy.removeIf(it -> it.channel().equals(ctx.channel()));
-                server.connections(copy);
+                for (var inactiveAction : server.inactiveActions()) {
+                    inactiveAction.accept(netty5ClientChannel);
+                }
+                copy.remove(netty5ClientChannel);
             }
         }
+        server.connections(copy);
     }
 
     @Override
