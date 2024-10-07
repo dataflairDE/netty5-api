@@ -18,6 +18,8 @@ package de.lumesolutions.netty5;
  * limitations under the License.
  */
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.netty5.channel.EventLoop;
 import io.netty5.channel.MultithreadEventLoopGroup;
 import io.netty5.channel.ServerChannel;
@@ -37,6 +39,8 @@ import java.util.UUID;
 
 @UtilityClass
 public class Netty5ChannelUtils {
+
+    public final Gson JSON = new GsonBuilder().disableHtmlEscaping().create();
 
     public final UUID SYSTEM_UUID = UUID.fromString("0f0f0f0f-0f0f-0f0f-f0f0-0f0f0f0f0f0f");
 

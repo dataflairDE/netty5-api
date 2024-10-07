@@ -1,5 +1,7 @@
 package de.lumesolutions.netty5.common.codec;
 
+import com.google.gson.JsonObject;
+import de.lumesolutions.netty5.Netty5ChannelUtils;
 import io.netty5.buffer.Buffer;
 import io.netty5.buffer.BufferAllocator;
 import io.netty5.buffer.DefaultBufferAllocators;
@@ -579,6 +581,15 @@ public record CodecBuffer(@NotNull Buffer origin) {
     public <T extends WriteReadStream> T readStream(@NotNull T stream) {
         stream.readBuffer(this);
         return stream;
+    }
+
+    public CodecBuffer writeJsonObject(@NotNull JsonObject jsonObject) {
+        this.writeString(jsonObject.toString());
+        return this;
+    }
+
+    public JsonObject readJsonObject() {
+        return Netty5ChannelUtils.JSON.fromJson(this.readString(), JsonObject.class);
     }
 
     public interface WriteReadStream {

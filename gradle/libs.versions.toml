@@ -6,6 +6,9 @@ jetbrains-annotations = "25.0.0"
 #netty5
 netty5-alpha = "5.0.0.Alpha5"
 
+#libs
+gson = "2.11.0"
+
 [libraries]
 # utilities
 utility-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "utility-lombok" }
@@ -13,3 +16,6 @@ jetbrains-annotations = { group = "org.jetbrains", name="annotations", version.r
 
 #netty5
 netty5-all = { group = "io.netty", name = "netty5-all", version.ref = "netty5-alpha" }
+
+#libs
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
