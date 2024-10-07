@@ -22,13 +22,16 @@ import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.Netty5Component;
 import de.lumesolutions.netty5.client.Netty5ClientPacketTransmitter;
 import io.netty5.bootstrap.ServerBootstrap;
-import io.netty5.channel.*;
+import io.netty5.channel.ChannelOption;
+import io.netty5.channel.EventLoopGroup;
+import io.netty5.channel.SimpleChannelInboundHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -79,4 +82,22 @@ public final class Netty5Server extends Netty5Component {
         this.workerGroup.shutdownGracefully();
         super.shutdownGracefully();
     }
+
+    public List<Netty5ClientChannel> clientChannel(@NotNull String name) {
+        return this.connections.stream()
+                .filter(clientChannel -> clientChannel.identity().name().equalsIgnoreCase(name))
+                .toList();
+    }
+
+    public Netty5ClientChannel firstChannel(@NotNull String name) {
+        return this.clientChannel(name).stream().findFirst().orElse(null);
+    }
+
+    public Netty5ClientChannel clientChannel(@NotNull UUID uuid) {
+        return this.connections.stream()
+                .filter(clientChannel -> clientChannel.identity().uuid().equals(uuid))
+                .findFirst()
+                .orElse(null);
+    }
+
 }
