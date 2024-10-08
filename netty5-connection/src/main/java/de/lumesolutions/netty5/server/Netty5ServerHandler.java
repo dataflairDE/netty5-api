@@ -52,6 +52,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
             for (var authenticationAction : server.authenticationActions()) {
                 authenticationAction.accept(netty5Channel);
             }
+            server.connections().add(netty5Channel);
             unauthenticated.remove(channelHandlerContext.channel().remoteAddress());
             return;
         }

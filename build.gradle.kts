@@ -11,7 +11,7 @@ allprojects {
     apply(plugin = "com.github.johnrengelman.shadow")
 
     group = "de.lumesolutions.netty5-api"
-    version = "1.0.6"
+    version = "1.0.8"
 
     repositories {
         maven {
