@@ -44,6 +44,8 @@ public final class Netty5Server extends Netty5Component {
     private final Netty5ServerPacketTransmitter packetTransmitter;
     @Setter
     private List<Netty5ClientChannel> connections = new ArrayList<>();
+    @Setter
+    private Netty5ClientChannel.Identity serverIdentity;
 
     public Netty5Server(@NotNull String hostname, int port) {
         super(1, hostname, port);

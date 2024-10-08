@@ -31,29 +31,29 @@ import java.io.IOException;
 @AllArgsConstructor
 public final class Netty5ClientHandler extends SimpleChannelInboundHandler<Packet> {
 
-    private final Netty5Client netty5Client;
+    private final Netty5Client client;
 
     @Override
     protected void messageReceived(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
-        netty5Client.thisChannel().transmitter().call(packet, null);
+        client.thisChannel().transmitter().call(packet, null);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.channel().writeAndFlush(new AuthPacket(netty5Client.identity(), netty5Client.authProperty()));
-        netty5Client.connectionState(Netty5Component.ConnectionState.CONNECTED);
-        netty5Client.thisChannel(new Netty5ClientChannel(netty5Client.identity(), ctx.channel(),
+        ctx.channel().writeAndFlush(new AuthPacket(client.identity(), client.authProperty()));
+        client.connectionState(Netty5Component.ConnectionState.CONNECTED);
+        client.thisChannel(new Netty5ClientChannel(client.identity(), ctx.channel(),
                 new Netty5ClientPacketTransmitter(
-                        netty5Client.bossGroup(),
-                        packet -> netty5Client.thisChannel().sendPacket(packet)
+                        client.bossGroup(),
+                        packet -> client.thisChannel().sendPacket(packet)
                 )));
-        netty5Client.connectionFuture().complete(null);
+        client.connectionFuture().complete(null);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if ((!ctx.channel().isActive() || !ctx.channel().isOpen() || !ctx.channel().isWritable())) {
-            netty5Client.connectionState(Netty5Component.ConnectionState.DISCONNECTED);
+            client.connectionState(Netty5Component.ConnectionState.DISCONNECTED);
             ctx.channel().close();
         }
     }
@@ -62,7 +62,7 @@ public final class Netty5ClientHandler extends SimpleChannelInboundHandler<Packe
     public void channelExceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (!(cause instanceof IOException)) {
             if (cause.getMessage().equalsIgnoreCase("null")) return;
-            cause.printStackTrace();
+            System.err.println("[client: " + client.identity().name() + "] Exception caught: " + cause.getMessage());
         }
     }
 }

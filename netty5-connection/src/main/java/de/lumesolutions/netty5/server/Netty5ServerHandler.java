@@ -17,8 +17,8 @@ package de.lumesolutions.netty5.server;
  */
 
 import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.common.packet.Packet;
 import de.lumesolutions.netty5.client.Netty5ClientPacketTransmitter;
+import de.lumesolutions.netty5.common.packet.Packet;
 import de.lumesolutions.netty5.common.packet.auth.AuthPacket;
 import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelHandlerContext;
@@ -30,7 +30,6 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 @AllArgsConstructor
 public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packet> {
@@ -101,7 +100,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
     public void channelExceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (!(cause instanceof IOException)) {
             if (cause.getMessage().equalsIgnoreCase("null")) return;
-            System.err.println("Exception caught: " + cause.getMessage());
+            System.err.println((server.serverIdentity() != null ? "[server: " + server.serverIdentity().name() + "]" : "") + "Exception caught: " + cause.getMessage());
         }
     }
 }
