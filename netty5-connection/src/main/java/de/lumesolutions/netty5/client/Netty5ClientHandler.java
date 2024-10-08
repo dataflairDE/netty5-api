@@ -42,10 +42,12 @@ public final class Netty5ClientHandler extends SimpleChannelInboundHandler<Packe
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.channel().writeAndFlush(new AuthPacket(netty5Client.identity(), netty5Client.authProperty()));
         netty5Client.connectionState(Netty5Component.ConnectionState.CONNECTED);
-        netty5Client.thisChannel(new Netty5ClientChannel(netty5Client.identity(), ctx.channel(), new Netty5ClientPacketTransmitter(
-                netty5Client.bossGroup(),
-                packet -> netty5Client.thisChannel().sendPacket(packet)
-        )));
+        netty5Client.thisChannel(new Netty5ClientChannel(netty5Client.identity(), ctx.channel(),
+                new Netty5ClientPacketTransmitter(
+                        netty5Client.bossGroup(),
+                        packet -> netty5Client.thisChannel().sendPacket(packet)
+                )));
+        netty5Client.connectionFuture().complete(null);
     }
 
     @Override

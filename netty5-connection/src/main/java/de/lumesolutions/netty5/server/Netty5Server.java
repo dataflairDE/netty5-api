@@ -20,7 +20,6 @@ import de.lumesolutions.netty5.Netty5ChannelInitializer;
 import de.lumesolutions.netty5.Netty5ChannelUtils;
 import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.Netty5Component;
-import de.lumesolutions.netty5.client.Netty5ClientPacketTransmitter;
 import io.netty5.bootstrap.ServerBootstrap;
 import io.netty5.channel.ChannelOption;
 import io.netty5.channel.EventLoopGroup;

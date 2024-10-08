@@ -112,7 +112,6 @@ public abstract class Netty5PacketTransmitter {
         queryPacket.buffer.writeUniqueId(queryPacket.queryId);
         queryPacket.writeBuffer(queryPacket.buffer);
         directRequests.put(queryPacket.queryId, new NullSimulationPacket());
-
         eventExecutors.execute(() -> packetConsumer.accept(queryPacket));
 
         var i = 0;

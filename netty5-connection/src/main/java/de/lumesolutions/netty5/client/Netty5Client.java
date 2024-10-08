@@ -73,7 +73,6 @@ public final class Netty5Client extends Netty5Component {
 
         bootstrap.connect(hostname(), port()).addListener(future -> {
             if (future.isSuccess()) {
-                this.connectionFuture().complete(null);
                 return;
             }
             this.connectionFuture(null);

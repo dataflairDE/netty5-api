@@ -43,6 +43,6 @@ public class DemoClient {
         new Thread(() -> {
             DemoRespondPacket packet = client.thisChannel().transmitter().queryPacketDirect(new DemoRequestPacket("asd"), DemoRespondPacket.class);
             System.out.println(packet.d());
-        });
+        }).start();
     }
 }

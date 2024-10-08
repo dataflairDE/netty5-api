@@ -23,6 +23,7 @@ import de.lumesolutions.netty5.TriConsumer;
 import de.lumesolutions.netty5.common.packet.Netty5PacketTransmitter;
 import de.lumesolutions.netty5.common.packet.Packet;
 import de.lumesolutions.netty5.common.packet.QueryPacket;
+import de.lumesolutions.netty5.common.packet.RespondPacket;
 import io.netty5.channel.EventLoopGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,9 +57,50 @@ public final class Netty5ServerPacketTransmitter extends Netty5PacketTransmitter
         // todo send to every connected client
     }
 
+    public <Q extends QueryPacket> void callResponder(@NotNull Q query, @NotNull Netty5ClientChannel sender) {
+        if (responders().containsKey(query.getClass())) {
+            responders().get(query.getClass()).forEach((_, queryPacketRespondPacketFunction) -> {
+                var respondPacket = queryPacketRespondPacketFunction.apply(query);
+                respondPacket.queryId(query.queryId());
+                respondPacket.buffer().writeUniqueId(query.queryId());
+                respondPacket.writeBuffer(respondPacket.buffer());
+                sender.transmitter().publishPacket(respondPacket);
+            });
+        } else {
+            sender.transmitter().callResponder(query);
+        }
+    }
+
+    @Override
+    public void call(@NotNull Packet packet, @Nullable Netty5ClientChannel sender) {
+        if (packet instanceof RespondPacket respondPacket) {
+            if (directRequests().containsKey(respondPacket.queryId())) {
+                directRequests().put(respondPacket.queryId(), packet);
+            }
+            if (futureRequests().containsKey(respondPacket.queryId())) {
+                futureRequests().get(respondPacket.queryId()).accept(packet);
+                futureRequests().remove(respondPacket.queryId());
+            }
+        }
+
+        if (packet instanceof QueryPacket queryPacket) {
+            if (sender != null) {
+                this.callResponder(queryPacket, sender);
+            } else {
+                throw new RuntimeException("Sender cannot be null by QueryPacket to Server");
+            }
+        }
+
+        this.callActions(packet, sender);
+
+        if (listener().containsKey(packet.getClass())) {
+            listener().get(packet.getClass()).forEach((_, packetConsumer) -> packetConsumer.accept(sender, packet));
+        }
+    }
+
     @Override
     public void publishPacket(@NotNull Packet packet) {
-        // todo send to every connected client
+        packetConsumer().accept(packet);
     }
 
     @Override
