@@ -1,6 +1,6 @@
 package de.lumesolutions.netty5.common.codec;
 
-import de.lumesolutions.netty5.Netty5ChannelUtils;
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.common.packet.Packet;
 import io.netty5.buffer.Buffer;
 import io.netty5.channel.ChannelHandlerContext;
@@ -9,6 +9,12 @@ import io.netty5.handler.codec.MessageToByteEncoder;
 import java.nio.charset.StandardCharsets;
 
 public final class PacketEncoder extends MessageToByteEncoder<Packet> {
+
+    private final Netty5ClientChannel.Identity identity;
+
+    public PacketEncoder(Netty5ClientChannel.Identity identity) {
+        this.identity = identity;
+    }
 
     @Override
     protected Buffer allocateBuffer(ChannelHandlerContext ctx, Packet msg) {
@@ -38,7 +44,7 @@ public final class PacketEncoder extends MessageToByteEncoder<Packet> {
             origin.copyInto(0, out, out.writerOffset(), readableBytes);
             out.skipWritableBytes(readableBytes);
         } catch (Exception e) {
-            System.err.println("Error while encoding packet " + msg.getClass().getName());
+            System.err.println("[identity: " + identity.name() + "] Error while encoding packet " + msg.getClass().getName());
             e.printStackTrace();
         }
     }

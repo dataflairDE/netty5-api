@@ -24,12 +24,19 @@ package de.lumesolutions.netty5.common.codec;
  * SOFTWARE.
  */
 
+import de.lumesolutions.netty5.Netty5ClientChannel;
 import de.lumesolutions.netty5.common.packet.Packet;
 import io.netty5.buffer.Buffer;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.handler.codec.ByteToMessageDecoder;
 
 public final class PacketDecoder extends ByteToMessageDecoder {
+
+    private final Netty5ClientChannel.Identity identity;
+
+    public PacketDecoder(Netty5ClientChannel.Identity identity) {
+        this.identity = identity;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -46,7 +53,7 @@ public final class PacketDecoder extends ByteToMessageDecoder {
             buffer.resetBuffer();
             ctx.fireChannelRead(packet);
         } catch (Exception e) {
-            System.err.println("Error while decoding packet " + className);
+            System.err.println("[identity: " + identity.name() + "] Error while decoding packet " + className);
             e.printStackTrace();
         }
     }

@@ -66,7 +66,7 @@ public final class Netty5Server extends Netty5Component {
         new ServerBootstrap()
                 .group(bossGroup(), workerGroup)
                 .channelFactory(Netty5ChannelUtils.buildChannelFactory())
-                .childHandler(new Netty5ChannelInitializer() {
+                .childHandler(new Netty5ChannelInitializer(this.serverIdentity) {
                     @Override
                     public SimpleChannelInboundHandler<?> handler() {
                         return new Netty5ServerHandler(Netty5Server.this);

@@ -56,7 +56,7 @@ public final class Netty5Client extends Netty5Component {
         var bootstrap = new Bootstrap()
                 .group(bossGroup())
                 .channelFactory(Netty5ChannelUtils::createChannelFactory)
-                .handler(new Netty5ChannelInitializer() {
+                .handler(new Netty5ChannelInitializer(this.identity) {
                     @Override
                     public SimpleChannelInboundHandler<?> handler() {
                         return new Netty5ClientHandler(Netty5Client.this);
