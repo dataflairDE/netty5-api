@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -188,11 +189,9 @@ public record CodecBuffer(@NotNull Buffer origin) {
      */
     public CodecBuffer writeNullable(@Nullable Object object, @NotNull Consumer<CodecBuffer> consumer) {
         this.writeBoolean(object != null);
-
         if (object != null) {
             consumer.accept(this);
         }
-
         return this;
     }
 
@@ -206,6 +205,16 @@ public record CodecBuffer(@NotNull Buffer origin) {
      */
     public <T> @Nullable T readNullable(@NotNull Class<T> objectClass, @NotNull Supplier<T> supplier) {
         return this.readBoolean() ? supplier.get() : null;
+    }
+
+    public CodecBuffer writeOptional(@NotNull Optional<Object> objectOptional, @NotNull Consumer<CodecBuffer> consumer) {
+        this.writeBoolean(objectOptional.isPresent());
+        objectOptional.ifPresent(object -> this.writeNullable(object, consumer));
+        return this;
+    }
+
+    public <T> @NotNull Optional<T> readOptional(@NotNull Class<T> objectClass, @NotNull Supplier<T> supplier) {
+        return this.readBoolean() ? Optional.ofNullable(this.readNullable(objectClass, supplier)) : Optional.empty();
     }
 
     /**
@@ -593,7 +602,8 @@ public record CodecBuffer(@NotNull Buffer origin) {
     }
 
     public interface WriteReadStream {
-         void writeBuffer(@NotNull CodecBuffer codecBuffer);
-         void readBuffer(@NotNull CodecBuffer codecBuffer);
+        void writeBuffer(@NotNull CodecBuffer codecBuffer);
+
+        void readBuffer(@NotNull CodecBuffer codecBuffer);
     }
 }
