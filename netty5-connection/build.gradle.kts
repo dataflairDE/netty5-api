@@ -13,12 +13,12 @@ dependencies {
 publishing {
     repositories {
         maven {
-            name = "lumesolutions"
+            name = "dataflair-public"
             url = uri(
                 if (version.toString()
                         .endsWith("SNAPSHOT")
-                ) "https://repository02.lumesolutions.de/repository/lumesolutions-public-dev/" else
-                    "https://repository02.lumesolutions.de/repository/lumesolutions-public-productive/"
+                ) "https://rp1.dataflair.cloud/repository/dataflair-public-development/"
+                else "https://rp1.dataflair.cloud/repository/dataflair-public-release/"
             )
             credentials {
                 username = project.findProperty("lumesolutions_user") as String?
@@ -28,7 +28,7 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("lumesolutions") {
+        create<MavenPublication>("dataflair-public") {
             groupId = groupId
             artifactId = artifactId
             version = version

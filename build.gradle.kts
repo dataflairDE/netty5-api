@@ -10,19 +10,18 @@ allprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "com.github.johnrengelman.shadow")
 
-    group = "de.lumesolutions.netty5-api"
+    group = "de.dataflair.netty5-api"
     version = "1.0.11"
 
     repositories {
         maven {
-            name = "lumesolutions"
-            url = uri("https://repository02.lumesolutions.de/repository/lumesolutions-intern-release/")
+            name = "dataflair-public-release"
+            url = uri("https://rp1.dataflair.cloud/repository/dataflair-public-release/")
             credentials {
                 username = project.findProperty("lumesolutions_user") as String?
                 password = project.findProperty("lumesolutions_password") as String?
             }
         }
-        maven("https://repo.papermc.io/repository/maven-public/")
         mavenCentral()
     }
 
