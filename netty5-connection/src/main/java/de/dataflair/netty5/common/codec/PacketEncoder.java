@@ -44,7 +44,7 @@ public final class PacketEncoder extends MessageToByteEncoder<Packet> {
             origin.copyInto(0, out, out.writerOffset(), readableBytes);
             out.skipWritableBytes(readableBytes);
         } catch (Exception e) {
-            System.err.println("[identity: " + identity.name() + "] Error while encoding packet " + msg.getClass().getName());
+            System.err.println((identity != null ? "[identity: " + identity.name() + "]" : "") + "Error while decoding packet" + msg.getClass().getName());
             e.printStackTrace();
         }
     }

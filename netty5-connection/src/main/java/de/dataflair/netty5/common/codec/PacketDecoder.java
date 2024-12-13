@@ -53,7 +53,7 @@ public final class PacketDecoder extends ByteToMessageDecoder {
             buffer.resetBuffer();
             ctx.fireChannelRead(packet);
         } catch (Exception e) {
-            System.err.println("[identity: " + identity.name() + "] Error while decoding packet " + className);
+            System.err.println((identity != null ? "[identity: " + identity.name() + "]" : "") + "Error while decoding packet" + className);
             e.printStackTrace();
         }
     }

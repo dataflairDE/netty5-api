@@ -101,6 +101,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
         if (!(cause instanceof IOException)) {
             if (cause.getMessage().equalsIgnoreCase("null")) return;
             System.err.println((server.serverIdentity() != null ? "[server: " + server.serverIdentity().name() + "]" : "") + "Exception caught: " + cause.getMessage());
+            cause.printStackTrace();
         }
     }
 }
