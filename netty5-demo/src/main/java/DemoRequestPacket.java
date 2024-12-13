@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.common.codec.CodecBuffer;
-import de.lumesolutions.netty5.common.packet.QueryPacket;
+import de.dataflair.netty5.common.codec.CodecBuffer;
+import de.dataflair.netty5.common.packet.QueryPacket;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

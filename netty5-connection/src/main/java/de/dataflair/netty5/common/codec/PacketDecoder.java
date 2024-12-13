@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.common.codec;
+package de.dataflair.netty5.common.codec;
 
 /*
  * MIT License
@@ -24,8 +24,8 @@ package de.lumesolutions.netty5.common.codec;
  * SOFTWARE.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.common.packet.Packet;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.common.packet.Packet;
 import io.netty5.buffer.Buffer;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.handler.codec.ByteToMessageDecoder;

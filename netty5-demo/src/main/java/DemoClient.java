@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.client.Netty5Client;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.client.Netty5Client;
 
 import java.util.UUID;
 

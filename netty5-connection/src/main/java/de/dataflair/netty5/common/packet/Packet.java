@@ -1,11 +1,9 @@
-package de.lumesolutions.netty5.common.packet;
+package de.dataflair.netty5.common.packet;
 
-import de.lumesolutions.netty5.common.codec.CodecBuffer;
+import de.dataflair.netty5.common.codec.CodecBuffer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 @Getter
 @Setter

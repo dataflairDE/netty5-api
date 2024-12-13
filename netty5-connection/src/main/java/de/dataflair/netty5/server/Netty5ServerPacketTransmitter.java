@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.server;
+package de.dataflair.netty5.server;
 
 
 
@@ -18,12 +18,12 @@ package de.lumesolutions.netty5.server;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.TriConsumer;
-import de.lumesolutions.netty5.common.packet.Netty5PacketTransmitter;
-import de.lumesolutions.netty5.common.packet.Packet;
-import de.lumesolutions.netty5.common.packet.QueryPacket;
-import de.lumesolutions.netty5.common.packet.RespondPacket;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.TriConsumer;
+import de.dataflair.netty5.common.packet.Netty5PacketTransmitter;
+import de.dataflair.netty5.common.packet.Packet;
+import de.dataflair.netty5.common.packet.QueryPacket;
+import de.dataflair.netty5.common.packet.RespondPacket;
 import io.netty5.channel.EventLoopGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

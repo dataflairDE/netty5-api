@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.client;
+package de.dataflair.netty5.client;
 
 
 
@@ -18,10 +18,10 @@ package de.lumesolutions.netty5.client;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.Netty5Component;
-import de.lumesolutions.netty5.common.packet.Packet;
-import de.lumesolutions.netty5.common.packet.auth.AuthPacket;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.Netty5Component;
+import de.dataflair.netty5.common.packet.Packet;
+import de.dataflair.netty5.common.packet.auth.AuthPacket;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;

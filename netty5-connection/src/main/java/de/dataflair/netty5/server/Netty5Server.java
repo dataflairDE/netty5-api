@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.server;
+package de.dataflair.netty5.server;
 
 /*
  * Copyright 2023-2024 netty5-api contributors
@@ -16,10 +16,10 @@ package de.lumesolutions.netty5.server;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ChannelInitializer;
-import de.lumesolutions.netty5.Netty5ChannelUtils;
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.Netty5Component;
+import de.dataflair.netty5.Netty5ChannelInitializer;
+import de.dataflair.netty5.Netty5ChannelUtils;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.Netty5Component;
 import io.netty5.bootstrap.ServerBootstrap;
 import io.netty5.channel.ChannelOption;
 import io.netty5.channel.EventLoopGroup;
@@ -38,7 +38,7 @@ import java.util.function.Predicate;
 public final class Netty5Server extends Netty5Component {
 
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
-    private final List<Predicate<Netty5ClientChannel>> authPredicates = new ArrayList<>();
+    private final List<Predicate<Netty5ClientChannel.AuthType>> authPredicates = new ArrayList<>();
     private final List<Consumer<Netty5ClientChannel>> authenticationActions = new ArrayList<>();
     private final List<Consumer<Netty5ClientChannel>> inactiveActions = new ArrayList<>();
     private final Netty5ServerPacketTransmitter packetTransmitter;
@@ -56,7 +56,7 @@ public final class Netty5Server extends Netty5Component {
         });
     }
 
-    public Netty5Server addAuthenticationPredicate(@NotNull Predicate<Netty5ClientChannel> predicate) {
+    public Netty5Server addAuthenticationPredicate(@NotNull Predicate<Netty5ClientChannel.AuthType> predicate) {
         this.authPredicates.add(predicate);
         return this;
     }

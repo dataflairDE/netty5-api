@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.client;
+package de.dataflair.netty5.client;
 
 
 
@@ -18,10 +18,10 @@ package de.lumesolutions.netty5.client;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ChannelInitializer;
-import de.lumesolutions.netty5.Netty5ChannelUtils;
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.Netty5Component;
+import de.dataflair.netty5.Netty5ChannelInitializer;
+import de.dataflair.netty5.Netty5ChannelUtils;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.Netty5Component;
 import io.netty5.bootstrap.Bootstrap;
 import io.netty5.channel.ChannelOption;
 import io.netty5.channel.SimpleChannelInboundHandler;

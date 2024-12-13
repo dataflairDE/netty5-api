@@ -1,7 +1,7 @@
-package de.lumesolutions.netty5.common.codec;
+package de.dataflair.netty5.common.codec;
 
 import com.google.gson.JsonObject;
-import de.lumesolutions.netty5.Netty5ChannelUtils;
+import de.dataflair.netty5.Netty5ChannelUtils;
 import io.netty5.buffer.Buffer;
 import io.netty5.buffer.BufferAllocator;
 import io.netty5.buffer.DefaultBufferAllocators;

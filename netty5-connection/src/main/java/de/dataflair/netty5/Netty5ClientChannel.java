@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5;
+package de.dataflair.netty5;
 
 /*
  * Copyright 2023-2024 netty5-api contributors
@@ -16,9 +16,9 @@ package de.lumesolutions.netty5;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.client.Netty5ClientPacketTransmitter;
-import de.lumesolutions.netty5.common.codec.CodecBuffer;
-import de.lumesolutions.netty5.common.packet.Packet;
+import de.dataflair.netty5.client.Netty5ClientPacketTransmitter;
+import de.dataflair.netty5.common.codec.CodecBuffer;
+import de.dataflair.netty5.common.packet.Packet;
 import io.netty5.channel.Channel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -60,6 +61,9 @@ public final class Netty5ClientChannel {
             this.name = codecBuffer.readString();
             this.uuid = codecBuffer.readUniqueId();
         }
+    }
+
+    public record AuthType(Netty5ClientChannel clientChannel, Map<String, String> authProperty) {
     }
 
 }

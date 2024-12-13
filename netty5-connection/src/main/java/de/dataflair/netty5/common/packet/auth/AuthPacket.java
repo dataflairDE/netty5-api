@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.common.packet.auth;
+package de.dataflair.netty5.common.packet.auth;
 
 
 
@@ -18,9 +18,9 @@ package de.lumesolutions.netty5.common.packet.auth;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.common.codec.CodecBuffer;
-import de.lumesolutions.netty5.common.packet.Packet;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.common.codec.CodecBuffer;
+import de.dataflair.netty5.common.packet.Packet;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

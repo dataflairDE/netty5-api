@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.server.Netty5Server;
+import de.dataflair.netty5.server.Netty5Server;
 
 public class DemoServer {
     public static void main(String[] args) {

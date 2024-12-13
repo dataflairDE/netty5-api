@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5;
+package de.dataflair.netty5.common.packet;
 
 
 
@@ -18,7 +18,26 @@ package de.lumesolutions.netty5;
  * limitations under the License.
  */
 
-@FunctionalInterface
-public interface TriConsumer<T, U, V> {
-    void accept(T t, U u, V v);
+import de.dataflair.netty5.common.codec.CodecBuffer;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+
+@Setter
+@Getter
+public abstract class QueryPacket extends Packet implements CodecBuffer.WriteReadStream {
+
+    protected UUID queryId;
+
+    public QueryPacket() {
+        super();
+    }
+
+    public QueryPacket(@NotNull CodecBuffer buffer) {
+        super(buffer);
+        this.queryId = buffer.readUniqueId();
+        this.readBuffer(buffer);
+    }
 }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.common.codec.CodecBuffer;
-import de.lumesolutions.netty5.common.packet.Packet;
+import de.dataflair.netty5.common.codec.CodecBuffer;
+import de.dataflair.netty5.common.packet.Packet;
 import org.jetbrains.annotations.NotNull;
 
 public class DemoPacket extends Packet {

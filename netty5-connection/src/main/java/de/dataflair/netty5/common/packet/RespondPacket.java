@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.common.packet;
+package de.dataflair.netty5.common.packet;
 
 
 
@@ -18,7 +18,7 @@ package de.lumesolutions.netty5.common.packet;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.common.codec.CodecBuffer;
+import de.dataflair.netty5.common.codec.CodecBuffer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -27,15 +27,15 @@ import java.util.UUID;
 
 @Setter
 @Getter
-public abstract class QueryPacket extends Packet implements CodecBuffer.WriteReadStream {
+public abstract class RespondPacket extends Packet implements CodecBuffer.WriteReadStream {
 
     protected UUID queryId;
 
-    public QueryPacket() {
+    public RespondPacket() {
         super();
     }
 
-    public QueryPacket(@NotNull CodecBuffer buffer) {
+    public RespondPacket(@NotNull CodecBuffer buffer) {
         super(buffer);
         this.queryId = buffer.readUniqueId();
         this.readBuffer(buffer);

@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5;
+package de.dataflair.netty5;
 
 
 
@@ -18,8 +18,8 @@ package de.lumesolutions.netty5;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.common.codec.PacketDecoder;
-import de.lumesolutions.netty5.common.codec.PacketEncoder;
+import de.dataflair.netty5.common.codec.PacketDecoder;
+import de.dataflair.netty5.common.codec.PacketEncoder;
 import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelInitializer;
 import io.netty5.channel.SimpleChannelInboundHandler;

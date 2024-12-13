@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.server;
+package de.dataflair.netty5.server;
 
 /*
  * Copyright 2023-2024 netty5-api contributors
@@ -16,10 +16,10 @@ package de.lumesolutions.netty5.server;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.client.Netty5ClientPacketTransmitter;
-import de.lumesolutions.netty5.common.packet.Packet;
-import de.lumesolutions.netty5.common.packet.auth.AuthPacket;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.client.Netty5ClientPacketTransmitter;
+import de.dataflair.netty5.common.packet.Packet;
+import de.dataflair.netty5.common.packet.auth.AuthPacket;
 import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.channel.SimpleChannelInboundHandler;
@@ -42,7 +42,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
         if (packet instanceof AuthPacket authPacket) {
             var netty5Channel = new Netty5ClientChannel(authPacket.identity(), channelHandlerContext.channel(), null);
             for (var authPredicate : server.authPredicates()) {
-                if (!authPredicate.test(netty5Channel)) {
+                if (!authPredicate.test(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
                     return;
                 }
             }

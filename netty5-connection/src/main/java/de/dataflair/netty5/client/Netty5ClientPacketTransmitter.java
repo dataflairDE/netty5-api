@@ -1,4 +1,4 @@
-package de.lumesolutions.netty5.client;
+package de.dataflair.netty5.client;
 
 
 
@@ -18,9 +18,9 @@ package de.lumesolutions.netty5.client;
  * limitations under the License.
  */
 
-import de.lumesolutions.netty5.Netty5ClientChannel;
-import de.lumesolutions.netty5.common.packet.Netty5PacketTransmitter;
-import de.lumesolutions.netty5.common.packet.Packet;
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.common.packet.Netty5PacketTransmitter;
+import de.dataflair.netty5.common.packet.Packet;
 import io.netty5.channel.EventLoopGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
