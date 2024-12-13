@@ -18,8 +18,8 @@ allprojects {
             name = "dataflair-public-release"
             url = uri("https://rp1.dataflair.cloud/repository/dataflair-public-release/")
             credentials {
-                username = project.findProperty("lumesolutions_user") as String?
-                password = project.findProperty("lumesolutions_password") as String?
+                username = project.findProperty("dataflair_rp1_admin_username") as String?
+                password = project.findProperty("dataflair_rp1_admin_password") as String?
             }
         }
         mavenCentral()
