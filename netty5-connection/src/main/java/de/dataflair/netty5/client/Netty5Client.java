@@ -36,7 +36,6 @@ import java.util.Map;
 
 @Getter
 public final class Netty5Client extends Netty5Component {
-
     private final Netty5ClientChannel.Identity identity;
     private final Map<String, String> authProperty;
     @Setter

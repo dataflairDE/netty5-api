@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.filter.ConnectionFilter;
 import de.dataflair.netty5.server.Netty5Server;
 
 public class DemoServer {
@@ -29,9 +31,7 @@ public class DemoServer {
 
         server.connectionFuture().thenAccept(unused -> {
             System.out.println("connected");
-            server.packetTransmitter().listenQuery(DemoRequestPacket.class, demoRequestPacket -> {
-                return new DemoRespondPacket(demoRequestPacket.s());
-            });
+            server.packetTransmitter().listenQuery(DemoRequestPacket.class, demoRequestPacket -> new DemoRespondPacket(demoRequestPacket.s()));
         });
 
         server.authenticationActions().add(packetTransmitter -> packetTransmitter.transmitter().listenQuery(DemoRequestPacket.class, "asdasdasd", packet -> new DemoRespondPacket(packet.s())));

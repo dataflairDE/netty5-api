@@ -18,6 +18,7 @@ package de.dataflair.netty5;
  * limitations under the License.
  */
 
+import de.dataflair.netty5.actions.Action;
 import io.netty5.channel.Channel;
 import io.netty5.channel.EventLoopGroup;
 import io.netty5.util.concurrent.FutureListener;
@@ -26,12 +27,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 @Getter
 public abstract class Netty5Component {
-
     @Setter(AccessLevel.PROTECTED)
     private CommunicationFuture<Void> connectionFuture = new CommunicationFuture<>();
     @Getter
@@ -40,6 +42,8 @@ public abstract class Netty5Component {
     private final String hostname;
     @Getter(AccessLevel.PROTECTED)
     private final int port;
+    @Getter
+    private final List<Action<?>> actions = new ArrayList<>();
     @Setter
     private ConnectionState connectionState = ConnectionState.UNDEFINED;
 
@@ -66,6 +70,11 @@ public abstract class Netty5Component {
                 connectionFuture.completeExceptionally(it.cause());
             }
         };
+    }
+
+    public <T extends Action<?>> Netty5Component addAction(@NotNull T action) {
+        actions.add(action);
+        return this;
     }
 
     public abstract void initialize() throws Exception;

@@ -32,7 +32,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public final class Netty5ClientChannel {
-
     @Setter
     private Identity identity;
     private final Channel channel;

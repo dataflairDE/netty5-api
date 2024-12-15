@@ -28,7 +28,6 @@ import java.util.UUID;
 @Setter
 @Getter
 public abstract class QueryPacket extends Packet implements CodecBuffer.WriteReadStream {
-
     protected UUID queryId;
 
     public QueryPacket() {

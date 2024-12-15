@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public abstract class Packet {
-
     protected CodecBuffer buffer;
 
     public Packet() {

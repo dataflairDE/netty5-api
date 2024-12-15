@@ -9,7 +9,6 @@ import io.netty5.handler.codec.MessageToByteEncoder;
 import java.nio.charset.StandardCharsets;
 
 public final class PacketEncoder extends MessageToByteEncoder<Packet> {
-
     private final Netty5ClientChannel.Identity identity;
 
     public PacketEncoder(Netty5ClientChannel.Identity identity) {

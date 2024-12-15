@@ -30,7 +30,6 @@ import java.io.IOException;
 
 @AllArgsConstructor
 public final class Netty5ClientHandler extends SimpleChannelInboundHandler<Packet> {
-
     private final Netty5Client client;
 
     @Override

@@ -32,7 +32,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class Netty5ServerPacketTransmitter extends Netty5PacketTransmitter {
-
     private final TriConsumer<QueryPacket, Class<Packet>, Consumer<Packet>> queryPacketConsumer;
 
     public Netty5ServerPacketTransmitter(EventLoopGroup eventExecutors,

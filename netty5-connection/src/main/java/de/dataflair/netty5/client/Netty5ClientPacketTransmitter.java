@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public final class Netty5ClientPacketTransmitter extends Netty5PacketTransmitter {
-
     public Netty5ClientPacketTransmitter(@NotNull EventLoopGroup eventExecutors,
                                          @NotNull Consumer<Packet> packetConsumer) {
         super(eventExecutors, packetConsumer);

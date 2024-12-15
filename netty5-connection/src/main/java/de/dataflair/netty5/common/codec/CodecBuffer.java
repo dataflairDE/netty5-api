@@ -1,5 +1,6 @@
 package de.dataflair.netty5.common.codec;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import de.dataflair.netty5.Netty5ChannelUtils;
 import io.netty5.buffer.Buffer;
@@ -10,10 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -51,6 +49,36 @@ public record CodecBuffer(@NotNull Buffer origin) {
      *   int maxBufferSize = BUFFER_ALLOCATOR.getMaxBufferSize();
      */
     private static final BufferAllocator BUFFER_ALLOCATOR = DefaultBufferAllocators.offHeapAllocator();
+
+    /**
+     * A list of BufferSerializer objects used for serialization and deserialization.
+     * The list is thread-safe to allow concurrent access.
+     */
+    private static final List<BufferSerializer<?>> bufferSerializers = Collections.synchronizedList(new ArrayList<>());
+
+    /**
+     * Adds a single BufferSerializer to the list if no serializer of the same type is already present.
+     *
+     * @param serializer The BufferSerializer to be added
+     */
+    public static void addBufferSerializer(@NotNull final BufferSerializer<?> serializer) {
+        bufferSerializers.stream()
+                .filter(existing -> existing.getClass().equals(serializer.getClass()))
+                .findFirst()
+                .ifPresentOrElse(
+                        existing -> {}, // Do nothing if a serializer of the same type already exists
+                        () -> bufferSerializers.add(serializer) // Otherwise, add the new serializer
+                );
+    }
+
+    /**
+     * Adds multiple BufferSerializers to the list.
+     *
+     * @param serializers The BufferSerializers to be added as varargs
+     */
+    public static void addBufferSerializer(@NotNull final BufferSerializer<?>... serializers) {
+        Arrays.stream(serializers).forEach(CodecBuffer::addBufferSerializer);
+    }
 
     /**
      * Allocates a new ProtocolBuffer object.
@@ -582,28 +610,128 @@ public record CodecBuffer(@NotNull Buffer origin) {
         return map;
     }
 
+    /**
+     * Writes a stream to the buffer.
+     *
+     * @param <T> The type of stream extending WriteReadStream
+     * @param stream The stream to be written
+     * @return This CodecBuffer instance for method chaining
+     */
     public <T extends WriteReadStream> CodecBuffer writeStream(@NotNull T stream) {
         stream.writeBuffer(this);
         return this;
     }
 
+    /**
+     * Reads a stream from the buffer.
+     *
+     * @param <T> The type of stream extending WriteReadStream
+     * @param stream The stream to be read into
+     * @return The stream after reading from the buffer
+     */
     public <T extends WriteReadStream> T readStream(@NotNull T stream) {
         stream.readBuffer(this);
         return stream;
     }
 
+    /**
+     * Writes a JsonObject to the buffer as a string.
+     *
+     * @param jsonObject The JsonObject to be written
+     * @return This CodecBuffer instance for method chaining
+     */
     public CodecBuffer writeJsonObject(@NotNull JsonObject jsonObject) {
         this.writeString(jsonObject.toString());
         return this;
     }
 
+    /**
+     * Reads a JsonObject from the buffer.
+     *
+     * @return The JsonObject read from the buffer
+     */
     public JsonObject readJsonObject() {
         return Netty5ChannelUtils.JSON.fromJson(this.readString(), JsonObject.class);
     }
 
+    /**
+     * Writes an object to the buffer using a serializer.
+     *
+     * @param <T> The type of the object to be written
+     * @param object The object to be written
+     * @param clazz The class of the object
+     * @return This CodecBuffer instance for method chaining
+     */
+    public <T> CodecBuffer writeWithSerializer(@NotNull T object, @NotNull Class<T> clazz) {
+        BufferSerializer<T> serializer = findSerializer(clazz);
+        if (serializer == null) {
+            System.err.println("No serializer found for class: " + clazz.getName());
+            return this;
+        }
+
+        try {
+            serializer.writeInBuffer(object, this);
+        } catch (Exception e) {
+            System.err.println("Error when writing the object for class: " + clazz.getName());
+            e.printStackTrace(System.err);
+        }
+        return this;
+    }
+
+    /**
+     * Reads an object from the buffer using a serializer.
+     *
+     * @param <T> The type of the object to be read
+     * @param clazz The class of the object to be read
+     * @return The object read from the buffer, or null if an error occurs
+     */
+    public <T> T readBySerializer(@NotNull Class<T> clazz) {
+        BufferSerializer<T> serializer = findSerializer(clazz);
+        if (serializer == null) {
+            System.err.println("No serializer found for class: " + clazz.getName());
+            return null;
+        }
+
+        try {
+            return serializer.readFromBuffer(this);
+        } catch (Exception e) {
+            System.err.println("Error when reading the object for class: " + clazz.getName());
+            e.printStackTrace(System.err);
+            return null;
+        }
+    }
+
+    /**
+     * Finds a serializer for the given class.
+     *
+     * @param <T> The type of the class to find a serializer for
+     * @param clazz The class to find a serializer for
+     * @return A BufferSerializer for the given class, or null if none is found
+     */
+    @SuppressWarnings("unchecked")
+    private <T> BufferSerializer<T> findSerializer(Class<T> clazz) {
+        return (BufferSerializer<T>) bufferSerializers.stream()
+                .filter(serializer -> clazz.isAssignableFrom(serializer.getClass()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Interface for objects that can be written to and read from a CodecBuffer.
+     */
     public interface WriteReadStream {
+        /**
+         * Writes this object to a CodecBuffer.
+         *
+         * @param codecBuffer The CodecBuffer to write to
+         */
         void writeBuffer(@NotNull CodecBuffer codecBuffer);
 
+        /**
+         * Reads this object from a CodecBuffer.
+         *
+         * @param codecBuffer The CodecBuffer to read from
+         */
         void readBuffer(@NotNull CodecBuffer codecBuffer);
     }
 }

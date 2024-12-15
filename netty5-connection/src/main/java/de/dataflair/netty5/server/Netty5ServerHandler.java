@@ -17,9 +17,14 @@ package de.dataflair.netty5.server;
  */
 
 import de.dataflair.netty5.Netty5ClientChannel;
+import de.dataflair.netty5.actions.Action;
+import de.dataflair.netty5.actions.ConnectionAction;
 import de.dataflair.netty5.client.Netty5ClientPacketTransmitter;
 import de.dataflair.netty5.common.packet.Packet;
 import de.dataflair.netty5.common.packet.auth.AuthPacket;
+import de.dataflair.netty5.filter.ConnectionFilter;
+import de.dataflair.netty5.filter.Filter;
+import de.dataflair.netty5.filter.PacketReceiveFilter;
 import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.channel.SimpleChannelInboundHandler;
@@ -33,7 +38,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @AllArgsConstructor
 public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packet> {
-
     private final Map<SocketAddress, Channel> unauthenticated = new ConcurrentHashMap<>();
     private final Netty5Server server;
 
@@ -41,15 +45,21 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
     protected void messageReceived(ChannelHandlerContext channelHandlerContext, Packet packet) throws Exception {
         if (packet instanceof AuthPacket authPacket) {
             var netty5Channel = new Netty5ClientChannel(authPacket.identity(), channelHandlerContext.channel(), null);
-            for (var authPredicate : server.authPredicates()) {
-                if (!authPredicate.test(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
-                    return;
+            for (var filter : server.filters()) {
+                if (filter instanceof ConnectionFilter connectionFilter) {
+                    if (!connectionFilter.evaluateFilter(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
+                        System.err.println("Connection not permitted due to filter (" + authPacket.identity().name() + ")");
+                        return;
+                    }
                 }
             }
             var transmitter = new Netty5ClientPacketTransmitter(channelHandlerContext.channel().executor(), netty5Channel::sendPacket);
             netty5Channel.transmitter(transmitter);
-            for (var authenticationAction : server.authenticationActions()) {
-                authenticationAction.accept(netty5Channel);
+            for (var action : server.actions()) {
+                if (action instanceof ConnectionAction connectionAction &&
+                        connectionAction.state().equals(ConnectionAction.State.CLIENT_AUTHENTICATED)) {
+                    connectionAction.consumer().accept(netty5Channel);
+                }
             }
             server.connections().add(netty5Channel);
             unauthenticated.remove(channelHandlerContext.channel().remoteAddress());
@@ -59,7 +69,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
         if (server.connections()
                 .stream()
                 .noneMatch(netty5ClientChannel -> netty5ClientChannel.channel().equals(channelHandlerContext.channel()))) {
-            System.out.println("Try to receive packet of channel which not authenticated");
+            System.err.println("Try to receive packet of channel which not authenticated");
             return;
         }
 
@@ -71,6 +81,18 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
 
         if (sender == null) {
             throw new NullPointerException("No sender transmitter found.");
+        }
+
+        for (var filter : server.filters()) {
+            if (filter instanceof PacketReceiveFilter packetReceiveFilter) {
+                if (!packetReceiveFilter.evaluateFilter(new PacketReceiveFilter.FilterValue(
+                        packet,
+                        sender
+                ))) {
+                    System.err.println("Receiving packet not allowed by filter (" + sender.identity().name() + ";" + packet.getClass().getName() + ")");
+                    return;
+                }
+            }
         }
 
         server.packetTransmitter().call(packet, sender);
@@ -87,8 +109,11 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
         var copy = new ArrayList<>(server.connections());
         for (var netty5ClientChannel : server.connections()) {
             if (netty5ClientChannel.channel().equals(ctx.channel())) {
-                for (var inactiveAction : server.inactiveActions()) {
-                    inactiveAction.accept(netty5ClientChannel);
+                for (var action : server.actions()) {
+                    if (action instanceof ConnectionAction connectionAction &&
+                            connectionAction.state().equals(ConnectionAction.State.CLIENT_DISCONNECTED)) {
+                        connectionAction.consumer().accept(netty5ClientChannel);
+                    }
                 }
                 copy.remove(netty5ClientChannel);
             }

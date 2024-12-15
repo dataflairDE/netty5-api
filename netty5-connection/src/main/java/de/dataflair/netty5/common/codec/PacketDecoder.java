@@ -31,7 +31,6 @@ import io.netty5.channel.ChannelHandlerContext;
 import io.netty5.handler.codec.ByteToMessageDecoder;
 
 public final class PacketDecoder extends ByteToMessageDecoder {
-
     private final Netty5ClientChannel.Identity identity;
 
     public PacketDecoder(Netty5ClientChannel.Identity identity) {

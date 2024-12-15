@@ -37,7 +37,6 @@ import java.util.function.Function;
 
 @Getter
 public abstract class Netty5PacketTransmitter {
-
     private final EventLoopGroup eventExecutors;
     private final Consumer<Packet> packetConsumer;
     private final Map<Class<? extends Packet>, Map<String, BiConsumer<Netty5ClientChannel, Packet>>> listener = new ConcurrentHashMap<>();

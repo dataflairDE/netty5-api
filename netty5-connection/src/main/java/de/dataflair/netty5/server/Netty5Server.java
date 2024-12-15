@@ -20,6 +20,10 @@ import de.dataflair.netty5.Netty5ChannelInitializer;
 import de.dataflair.netty5.Netty5ChannelUtils;
 import de.dataflair.netty5.Netty5ClientChannel;
 import de.dataflair.netty5.Netty5Component;
+import de.dataflair.netty5.actions.Action;
+import de.dataflair.netty5.actions.ConnectionAction;
+import de.dataflair.netty5.filter.ConnectionFilter;
+import de.dataflair.netty5.filter.Filter;
 import io.netty5.bootstrap.ServerBootstrap;
 import io.netty5.channel.ChannelOption;
 import io.netty5.channel.EventLoopGroup;
@@ -36,9 +40,8 @@ import java.util.function.Predicate;
 
 @Getter
 public final class Netty5Server extends Netty5Component {
-
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
-    private final List<Predicate<Netty5ClientChannel.AuthType>> authPredicates = new ArrayList<>();
+    private final List<Filter<?>> filters = new ArrayList<>();
     private final List<Consumer<Netty5ClientChannel>> authenticationActions = new ArrayList<>();
     private final List<Consumer<Netty5ClientChannel>> inactiveActions = new ArrayList<>();
     private final Netty5ServerPacketTransmitter packetTransmitter;
@@ -56,8 +59,8 @@ public final class Netty5Server extends Netty5Component {
         });
     }
 
-    public Netty5Server addAuthenticationPredicate(@NotNull Predicate<Netty5ClientChannel.AuthType> predicate) {
-        this.authPredicates.add(predicate);
+    public <T extends Filter<?>> Netty5Server addFilter(@NotNull T filter) {
+        this.filters.add(filter);
         return this;
     }
 

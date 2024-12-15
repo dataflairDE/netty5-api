@@ -29,7 +29,6 @@ import java.util.Map;
 
 @Getter
 public class AuthPacket extends Packet {
-
     protected final Netty5ClientChannel.Identity identity;
     protected final Map<String, String> properties;
 

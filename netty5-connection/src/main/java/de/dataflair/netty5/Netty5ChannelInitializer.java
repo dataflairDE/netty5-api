@@ -27,7 +27,6 @@ import io.netty5.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty5.handler.codec.LengthFieldPrepender;
 
 public abstract class Netty5ChannelInitializer extends ChannelInitializer<Channel> {
-
     private final Netty5ClientChannel.Identity identity;
 
     public Netty5ChannelInitializer(Netty5ClientChannel.Identity identity) {

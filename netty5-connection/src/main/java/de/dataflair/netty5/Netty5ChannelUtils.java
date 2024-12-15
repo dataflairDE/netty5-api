@@ -39,9 +39,7 @@ import java.util.UUID;
 
 @UtilityClass
 public class Netty5ChannelUtils {
-
     public final Gson JSON = new GsonBuilder().disableHtmlEscaping().create();
-
     public final UUID SYSTEM_UUID = UUID.fromString("0f0f0f0f-0f0f-0f0f-f0f0-0f0f0f0f0f0f");
 
     public static @NotNull MultithreadEventLoopGroup createEventLoopGroup(int threads) {
