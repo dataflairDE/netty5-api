@@ -11,7 +11,7 @@ allprojects {
     apply(plugin = "com.github.johnrengelman.shadow")
 
     group = "de.dataflair.netty5-api"
-    version = "1.0.16"
+    version = "1.0.17"
 
     repositories {
         maven {
