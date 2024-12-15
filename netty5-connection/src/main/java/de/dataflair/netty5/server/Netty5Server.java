@@ -42,8 +42,6 @@ import java.util.function.Predicate;
 public final class Netty5Server extends Netty5Component {
     private final EventLoopGroup workerGroup = Netty5ChannelUtils.createEventLoopGroup(0);
     private final List<Filter<?>> filters = new ArrayList<>();
-    private final List<Consumer<Netty5ClientChannel>> authenticationActions = new ArrayList<>();
-    private final List<Consumer<Netty5ClientChannel>> inactiveActions = new ArrayList<>();
     private final Netty5ServerPacketTransmitter packetTransmitter;
     @Setter
     private List<Netty5ClientChannel> connections = new ArrayList<>();
