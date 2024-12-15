@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 public class ConnectionAction extends Action<Netty5ClientChannel> {
     private final State state;
 
-    protected ConnectionAction(@NotNull Consumer<Netty5ClientChannel> consumer, @NotNull State state) {
+    public ConnectionAction(@NotNull Consumer<Netty5ClientChannel> consumer, @NotNull State state) {
         super(consumer);
         this.state = state;
     }
