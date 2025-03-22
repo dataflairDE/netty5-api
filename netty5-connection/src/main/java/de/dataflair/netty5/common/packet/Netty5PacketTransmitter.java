@@ -170,12 +170,12 @@ public abstract class Netty5PacketTransmitter {
                 .toString();
     }
 
-    public <Q extends QueryPacket> void callResponder(@NotNull Q query) {
-        if (responders.containsKey(query.getClass())) {
-            responders.get(query.getClass()).forEach((_, queryPacketRespondPacketFunction) -> {
-                var respondPacket = queryPacketRespondPacketFunction.apply(query);
-                respondPacket.queryId(query.queryId);
-                respondPacket.buffer.writeUniqueId(query.queryId);
+    public <R extends RequestPacket> void callResponder(@NotNull R request) {
+        if (responders.containsKey(request.getClass())) {
+            responders.get(request.getClass()).forEach((_, packetRespondPacketFunction) -> {
+                var respondPacket = packetRespondPacketFunction.apply(request);
+                respondPacket.queryId(request.queryId);
+                respondPacket.buffer.writeUniqueId(request.queryId);
                 respondPacket.writeBuffer(respondPacket.buffer);
                 publishPacket(respondPacket);
             });
