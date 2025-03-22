@@ -14,9 +14,8 @@ public class JsonRequestPacket extends RequestPacket {
         this.json = json;
     }
 
-    public JsonRequestPacket(@NotNull CodecBuffer buffer, String json) {
+    public JsonRequestPacket(@NotNull CodecBuffer buffer) {
         super(buffer);
-        this.json = json;
     }
 
     @Override

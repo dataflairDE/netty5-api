@@ -7,16 +7,15 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class JsonRespondPacket extends RespondPacket {
-    
+
     private String json;
 
     public JsonRespondPacket(String json) {
         this.json = json;
     }
 
-    public JsonRespondPacket(@NotNull CodecBuffer buffer, String json) {
+    public JsonRespondPacket(@NotNull CodecBuffer buffer) {
         super(buffer);
-        this.json = json;
     }
 
     @Override
