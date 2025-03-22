@@ -53,17 +53,17 @@ public final class Netty5ServerPacketTransmitter extends Netty5PacketTransmitter
         // todo send to every connected client
     }
 
-    public <Q extends QueryPacket> void callResponder(@NotNull Q query, @NotNull Netty5ClientChannel sender) {
-        if (responders().containsKey(query.getClass())) {
-            responders().get(query.getClass()).forEach((_, queryPacketRespondPacketFunction) -> {
-                var respondPacket = queryPacketRespondPacketFunction.apply(query);
-                respondPacket.queryId(query.queryId());
-                respondPacket.buffer().writeUniqueId(query.queryId());
+    public <R extends RequestPacket> void callResponder(@NotNull R request, @NotNull Netty5ClientChannel sender) {
+        if (responders().containsKey(request.getClass())) {
+            responders().get(request.getClass()).forEach((_, respondPacketFunction) -> {
+                var respondPacket = respondPacketFunction.apply(request);
+                respondPacket.queryId(request.queryId());
+                respondPacket.buffer().writeUniqueId(request.queryId());
                 respondPacket.writeBuffer(respondPacket.buffer());
                 sender.transmitter().publishPacket(respondPacket);
             });
         } else {
-            sender.transmitter().callResponder(query);
+            sender.transmitter().callResponder(request);
         }
     }
 
