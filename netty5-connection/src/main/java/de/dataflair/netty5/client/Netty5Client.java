@@ -33,13 +33,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class Netty5Client extends Netty5Component {
     private final Netty5ClientChannel.Identity identity;
     private final Map<String, String> authProperty;
+    private final ScheduledExecutorService reconnectScheduler = Executors.newScheduledThreadPool(1);
     @Setter
     private Netty5ClientChannel thisChannel;
+    private Bootstrap bootstrap;
 
     public Netty5Client(@NotNull String hostname,
                         int port,
@@ -52,7 +57,7 @@ public final class Netty5Client extends Netty5Component {
 
     @Override
     public void initialize() throws Exception {
-        var bootstrap = new Bootstrap()
+         bootstrap = new Bootstrap()
                 .group(bossGroup())
                 .channelFactory(Netty5ChannelUtils::createChannelFactory)
                 .handler(new Netty5ChannelInitializer(this.identity) {
@@ -70,11 +75,26 @@ public final class Netty5Client extends Netty5Component {
             bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
         }
 
+        connect();
+    }
+
+    private void connect() {
         bootstrap.connect(hostname(), port()).addListener(future -> {
             if (future.isSuccess()) {
                 return;
             }
+            scheduleReconnect();
             this.connectionFuture(null);
         });
+    }
+
+    private void scheduleReconnect() {
+        reconnectScheduler.schedule(() -> {
+            if (this.connectionState() == ConnectionState.DISCONNECTED ||
+                    this.connectionState() == ConnectionState.SEASON_CLOSED) {
+                System.out.println("Attempting to reconnect...");
+                connect();
+            }
+        }, 5, TimeUnit.SECONDS);
     }
 }

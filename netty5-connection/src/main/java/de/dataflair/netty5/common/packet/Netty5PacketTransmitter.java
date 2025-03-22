@@ -42,7 +42,7 @@ public abstract class Netty5PacketTransmitter {
     private final Map<Class<? extends Packet>, Map<String, BiConsumer<Netty5ClientChannel, Packet>>> listener = new ConcurrentHashMap<>();
     private final Map<UUID, Consumer<Packet>> futureRequests = new ConcurrentHashMap<>();
     private final Map<UUID, Packet> directRequests = new HashMap<>();
-    private final Map<Class<? extends QueryPacket>, Map<String, Function<QueryPacket, RespondPacket>>> responders = new ConcurrentHashMap<>();
+    private final Map<Class<? extends RequestPacket>, Map<String, Function<RequestPacket, RespondPacket>>> responders = new ConcurrentHashMap<>();
 
     protected Netty5PacketTransmitter(@NotNull EventLoopGroup eventExecutors,
                                       @NotNull Consumer<Packet> packetConsumer) {
@@ -65,15 +65,15 @@ public abstract class Netty5PacketTransmitter {
     }
 
     @SuppressWarnings("unchecked")
-    public <Q extends QueryPacket> void listenQuery(@NotNull Class<Q> queryClass,
+    public <Q extends RequestPacket> void listenQuery(@NotNull Class<Q> queryClass,
                                                     @NotNull String key,
                                                     @NotNull Function<Q, RespondPacket> callback) {
         var responders = this.responders.getOrDefault(queryClass, new ConcurrentHashMap<>());
-        responders.put(key, (Function<QueryPacket, RespondPacket>) callback);
+        responders.put(key, (Function<RequestPacket, RespondPacket>) callback);
         this.responders.put(queryClass, responders);
     }
 
-    public <Q extends QueryPacket> void listenQuery(@NotNull Class<Q> queryClass,
+    public <Q extends RequestPacket> void listenQuery(@NotNull Class<Q> queryClass,
                                                     @NotNull Function<Q, RespondPacket> callback) {
         this.listenQuery(queryClass, generateRandomKey(), callback);
     }
@@ -93,44 +93,44 @@ public abstract class Netty5PacketTransmitter {
     }
 
     @SuppressWarnings("unchecked")
-    public <P extends Packet> void queryPacket(@NotNull QueryPacket queryPacket, Class<P> packet, Consumer<P> callback) {
-        queryPacket.queryId = UUID.randomUUID();
-        queryPacket.buffer.writeUniqueId(queryPacket.queryId);
-        queryPacket.writeBuffer(queryPacket.buffer);
+    public <P extends Packet> void queryPacket(@NotNull RequestPacket requestPacket, Class<P> packet, Consumer<P> callback) {
+        requestPacket.queryId = UUID.randomUUID();
+        requestPacket.buffer.writeUniqueId(requestPacket.queryId);
+        requestPacket.writeBuffer(requestPacket.buffer);
         try {
-            futureRequests.put(queryPacket.queryId, (Consumer<Packet>) callback);
+            futureRequests.put(requestPacket.queryId, (Consumer<Packet>) callback);
         } catch (ClassCastException exception) {
             CompletableFuture.failedFuture(exception);
         }
-        this.publishPacket(queryPacket);
+        this.publishPacket(requestPacket);
     }
 
-    public <P extends Packet> P queryPacketDirect(@NotNull QueryPacket queryPacket, Class<P> packetClass) {
-        queryPacket.queryId = UUID.randomUUID();
-        queryPacket.buffer.writeUniqueId(queryPacket.queryId);
-        queryPacket.writeBuffer(queryPacket.buffer);
-        directRequests.put(queryPacket.queryId, new NullSimulationPacket());
-        eventExecutors.execute(() -> packetConsumer.accept(queryPacket));
+    public <P extends Packet> P queryPacketDirect(@NotNull RequestPacket requestPacket, Class<P> packetClass) {
+        requestPacket.queryId = UUID.randomUUID();
+        requestPacket.buffer.writeUniqueId(requestPacket.queryId);
+        requestPacket.writeBuffer(requestPacket.buffer);
+        directRequests.put(requestPacket.queryId, new NullSimulationPacket());
+        eventExecutors.execute(() -> packetConsumer.accept(requestPacket));
 
         var i = 0;
-        while (directRequests.get(queryPacket.queryId).getClass().equals(NullSimulationPacket.class) && i++ < 5000) {
+        while (directRequests.get(requestPacket.queryId).getClass().equals(NullSimulationPacket.class) && i++ < 5000) {
             try {
                 Thread.sleep(0, 500000);
             } catch (InterruptedException ignored) {
             }
         }
 
-        var result = directRequests.get(queryPacket.queryId);
-        directRequests.remove(queryPacket.queryId);
+        var result = directRequests.get(requestPacket.queryId);
+        directRequests.remove(requestPacket.queryId);
         if (result.getClass().equals(NullSimulationPacket.class))
             return null;
         return (P) result;
     }
 
     @SuppressWarnings("unchecked")
-    public <P extends Packet> CompletableFuture<Packet> queryPacket(@NotNull QueryPacket queryPacket, Class<P> packet) {
+    public <P extends Packet> CompletableFuture<Packet> queryPacket(@NotNull RequestPacket requestPacket, Class<P> packet) {
         var future = new CompletableFuture<P>();
-        this.queryPacket(queryPacket, packet, future::complete);
+        this.queryPacket(requestPacket, packet, future::complete);
         try {
             return (CompletableFuture<Packet>) future;
         } catch (ClassCastException exception) {
@@ -151,8 +151,8 @@ public abstract class Netty5PacketTransmitter {
             }
         }
 
-        if (packet instanceof QueryPacket queryPacket) {
-            this.callResponder(queryPacket);
+        if (packet instanceof RequestPacket requestPacket) {
+            this.callResponder(requestPacket);
         }
 
         this.callActions(packet, sender);

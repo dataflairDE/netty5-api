@@ -27,15 +27,14 @@ import java.util.UUID;
 
 @Setter
 @Getter
-@Deprecated
-public abstract class QueryPacket extends RequestPacket {
+public abstract class RequestPacket extends Packet implements CodecBuffer.WriteReadStream {
     protected UUID queryId;
 
-    public QueryPacket() {
+    public RequestPacket() {
         super();
     }
 
-    public QueryPacket(@NotNull CodecBuffer buffer) {
+    public RequestPacket(@NotNull CodecBuffer buffer) {
         super(buffer);
         this.queryId = buffer.readUniqueId();
         this.readBuffer(buffer);

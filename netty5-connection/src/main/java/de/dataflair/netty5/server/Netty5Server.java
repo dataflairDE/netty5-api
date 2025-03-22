@@ -52,7 +52,7 @@ public final class Netty5Server extends Netty5Component {
         super(1, hostname, port);
         this.packetTransmitter = new Netty5ServerPacketTransmitter(bossGroup(), packet -> {
 
-        }, (queryPacket, packetClass, consumer) -> {
+        }, (requestPacket, packetClass, consumer) -> {
 
         });
     }

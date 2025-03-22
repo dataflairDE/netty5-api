@@ -17,13 +17,11 @@ package de.dataflair.netty5.server;
  */
 
 import de.dataflair.netty5.Netty5ClientChannel;
-import de.dataflair.netty5.actions.Action;
 import de.dataflair.netty5.actions.ConnectionAction;
 import de.dataflair.netty5.client.Netty5ClientPacketTransmitter;
 import de.dataflair.netty5.common.packet.Packet;
 import de.dataflair.netty5.common.packet.auth.AuthPacket;
 import de.dataflair.netty5.filter.ConnectionFilter;
-import de.dataflair.netty5.filter.Filter;
 import de.dataflair.netty5.filter.PacketReceiveFilter;
 import io.netty5.channel.Channel;
 import io.netty5.channel.ChannelHandlerContext;
@@ -47,7 +45,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
             var netty5Channel = new Netty5ClientChannel(authPacket.identity(), channelHandlerContext.channel(), null);
             for (var filter : server.filters()) {
                 if (filter instanceof ConnectionFilter connectionFilter) {
-                    if (!connectionFilter.evaluateFilter(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
+                    if (connectionFilter.evaluatefilter(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
                         System.err.println("Connection not permitted due to filter (" + authPacket.identity().name() + ")");
                         return;
                     }
@@ -85,7 +83,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
 
         for (var filter : server.filters()) {
             if (filter instanceof PacketReceiveFilter packetReceiveFilter) {
-                if (!packetReceiveFilter.evaluateFilter(new PacketReceiveFilter.FilterValue(
+                if (packetReceiveFilter.evaluatefilter(new PacketReceiveFilter.FilterValue(
                         packet,
                         sender
                 ))) {

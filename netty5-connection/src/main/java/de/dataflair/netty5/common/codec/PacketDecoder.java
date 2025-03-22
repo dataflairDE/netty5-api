@@ -37,7 +37,6 @@ public final class PacketDecoder extends ByteToMessageDecoder {
         this.identity = identity;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void decode(ChannelHandlerContext ctx, Buffer in) {
         var buffer = new CodecBuffer(in);
