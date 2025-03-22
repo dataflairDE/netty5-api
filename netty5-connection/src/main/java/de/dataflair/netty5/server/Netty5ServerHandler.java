@@ -45,7 +45,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
             var netty5Channel = new Netty5ClientChannel(authPacket.identity(), channelHandlerContext.channel(), null);
             for (var filter : server.filters()) {
                 if (filter instanceof ConnectionFilter connectionFilter) {
-                    if (connectionFilter.evaluatefilter(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
+                    if (!connectionFilter.evaluateFilter(new Netty5ClientChannel.AuthType(netty5Channel, authPacket.properties()))) {
                         System.err.println("Connection not permitted due to filter (" + authPacket.identity().name() + ")");
                         return;
                     }
@@ -83,7 +83,7 @@ public final class Netty5ServerHandler extends SimpleChannelInboundHandler<Packe
 
         for (var filter : server.filters()) {
             if (filter instanceof PacketReceiveFilter packetReceiveFilter) {
-                if (packetReceiveFilter.evaluatefilter(new PacketReceiveFilter.FilterValue(
+                if (!packetReceiveFilter.evaluateFilter(new PacketReceiveFilter.FilterValue(
                         packet,
                         sender
                 ))) {
